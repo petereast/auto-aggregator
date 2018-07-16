@@ -1,0 +1,36 @@
+events:
+  ver: '0.0.1'
+
+defs:
+  AccountInvitedToOrg:
+    sequence: 0
+    payload:
+      - invite_token
+      - name
+      - organisation_id
+
+    state:
+      membership_status:
+        type: string
+        value: 'PENDING'
+
+  AccountInviteToOrgRevoked:
+    sequence: 1
+    payload:
+      - invite_token
+    state:
+      membership_status:
+        type: string
+        value: 'REVOKED'
+
+  AccountInviteToOrgAccepted:
+    sequence: 1
+    payload:
+      - invite_token
+      - user_id
+    triggers:
+      - SomethingElse
+    state:
+      membership_status:
+        type: string
+        value: 'ACCEPTED'

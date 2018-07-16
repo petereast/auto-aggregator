@@ -1,0 +1,22 @@
+{
+  "name": "auto-aggregator",
+  "version": "1.0.0",
+  "description": "Something to asynchronously aggregate events based on documentation",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/petereast/auto-aggregator.git"
+  },
+  "author": "Peter East",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/petereast/auto-aggregator/issues"
+  },
+  "homepage": "https://github.com/petereast/auto-aggregator#readme",
+  "dependencies": {
+    "typescript": "^2.9.2"
+  }
+}
