@@ -42,6 +42,7 @@ const example_query = {
   select: [
     'invite_token',
     'organisation_id',
+    'user_id',
   ],
   where: {
     email: 'peter@repositive.io',

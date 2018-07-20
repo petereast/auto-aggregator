@@ -5,8 +5,6 @@ import {events_by_payload, simple_aggregate, test_events, example_query} from '.
 console.log("[INFO] Startup...");
 const results = read_events();
 
-console.log(results);
-
 // { AccountInvitedToOrg:
 //    { sequence: 0,
 //      payload:[ 'invite_token', 'name', 'organisation_id', 'organisation_type' ],
@@ -24,6 +22,3 @@ console.log(results);
 //  { sequence: 1,
 //    payload: [ 'name', 'email', 'user_id' ],
 //    triggers: [ 'AccountInviteToOrgAccepted' ] } }
-
-console.log(events_by_payload(results));
-console.log(simple_aggregate(results, example_query)(test_events));
