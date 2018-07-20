@@ -8,7 +8,7 @@ defs:
       - invite_token
       - name
       - organisation_id
-
+      - organisation_type
     state:
       membership_status:
         type: string
@@ -34,3 +34,12 @@ defs:
       membership_status:
         type: string
         value: 'ACCEPTED'
+
+  AccountCreated:
+    sequence: 1
+    payload:
+      - name
+      - email
+      - user_id
+    triggers:
+      - AccountInviteToOrgAccepted
