@@ -41,18 +41,17 @@ const test_events = [
   },
 ];
 
-const example_query = {
-  select: [
-    'invite_token',
-    'organisation_id',
-    'user_id',
-  ],
-  where: {
-    email: 'peter@repositive.io',
-  },
-};
-
 test("The aggregate returns an acceptable result", async (t) => {
+  const example_query = {
+    select: [
+      'invite_token',
+      'organisation_id',
+      'user_id',
+    ],
+    where: {
+      email: 'peter@repositive.io',
+    },
+  };
   const result = simple_aggregate(read_events(), example_query)
     (test_events);
 
@@ -64,4 +63,22 @@ test("The aggregate returns an acceptable result", async (t) => {
       user_id: '4',
     },
   );
+});
+
+test('The aggregator returns an acceptable result when grouping events', async (t) => {
+  const example_query = {
+    select: [
+      'invite_token',
+      'organisation_id',
+      'user_id',
+    ],
+    where: {
+      email: 'peter"repositive.io',
+    },
+    group_by: [
+      'name',
+    ],
+  };
+
+  t.fail();
 });
