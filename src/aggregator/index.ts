@@ -20,6 +20,20 @@ export interface AggregationQuery {
   where: any;
   group_by?: string[];
 }
+
+const get_state_change_by_event = (event_definitions: any, event: any) => {
+  try {
+    const state_changes = Object.entries(event_definitions[event.type].state);
+    return state_changes.reduce((acc, change) => {
+      const c = {};
+      c[change[0]] = (change[1] as any).value;
+      return {...acc, ...c};
+    }, {});
+  } catch (e) {
+    return {};
+  }
+};
+
 // TODO: Write a query parser in parser
 const simple_aggregate = (event_definitions: any[], query: AggregationQuery) =>
   (events: any[]): any => {
@@ -39,7 +53,11 @@ const simple_aggregate = (event_definitions: any[], query: AggregationQuery) =>
     console.log(selected_events);
 
     return R.pick(query.select)(selected_events.reduce((acc, event) => {
-      return {...acc, ...event.payload};
+      return {
+        ...acc,
+        ...event.payload,
+        ...get_state_change_by_event(event_definitions, event),
+      };
     }, {}));
 };
 
