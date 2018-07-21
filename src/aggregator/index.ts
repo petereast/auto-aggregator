@@ -62,8 +62,18 @@ const simple_aggregate = (event_definitions: any[], query: AggregationQuery) =>
 };
 
 const group_by_aggregate = (event_definitions: any[], query: AggregationQuery) =>
-  (events: any[]): any => {
+  (event_store: any): any => {
+    const events_of_interest: string[] = R.uniq(
+      query.select.reduce((acc: any, attr: any) => {
+        return [...acc, ...events_by_payload(event_definitions).get(attr)];
+      }, [] as string[]),
+    );
+    const initial_results = event_store.readAll({...query.where});
     return undefined;
+    // Start with the where clause
+
+    // Then fill in the rest of the information, maybe recursively, using
+    // attributes that are common between events as where?
 };
 
 export {
