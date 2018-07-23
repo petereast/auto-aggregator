@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 
-import events_by_payload from './events_by_payload';
+import events_by_payload from './events-by-payload';
 
 export {events_by_payload};
 
@@ -59,6 +59,10 @@ const simple_aggregate = (event_definitions: any[], query: AggregationQuery) =>
         ...get_state_change_by_event(event_definitions, event),
       };
     }, {}));
+};
+
+const generate_data_map = (event_definitions: any[]) => {
+  return undefined; // TODO: Get a clustered payload object
 };
 
 const group_by_aggregate = (event_definitions: any[], query: AggregationQuery) =>
