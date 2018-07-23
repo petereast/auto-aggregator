@@ -1,4 +1,5 @@
 // Test helper - provides testing methods and stuff
+import * as R from 'ramda';
 
 const fake_event_pool = [
   {
@@ -49,7 +50,23 @@ export const store = {
     if (!condition) {
       return fake_event_pool;
     } else {
-      return undefined;
+      return fake_event_pool.filter(
+        (item) => {
+          let isType = false;
+          if (condition.type) {
+            isType = item.type === condition.type;
+          }
+          return isType || Object.entries(item.payload).reduce(
+            (acc, entry) => {
+              // Entry is a [key, value] array
+              if (R.path([entry[0]])(condition)) {
+                console.log("ENTRY", entry);
+                return acc || entry[1] === R.path([entry[0]])(condition);
+              }
+              return acc;
+            }, false);
+          return true;
+        });
     }
   },
 };
