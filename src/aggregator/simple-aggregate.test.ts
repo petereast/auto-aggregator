@@ -23,7 +23,7 @@ test("The aggregate returns an acceptable result", async (t) => {
     },
   };
   const result = simple_aggregate(read_events(), example_query)
-    (test_events);
+    (test_events.slice(0, 4));
 
   t.deepEqual(
     result,

@@ -43,3 +43,11 @@ defs:
       - user_id
     triggers:
       - AccountInviteToOrgAccepted
+  SomethingRandom:
+    sequence: 1
+    payload:
+      - organisation_id
+    state:
+      organisation_flag:
+        type: string
+        value: 'FLAGGED'

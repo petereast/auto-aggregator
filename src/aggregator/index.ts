@@ -63,12 +63,18 @@ const simple_aggregate = (event_definitions: any[], query: AggregationQuery) =>
 
 const group_by_aggregate = (event_definitions: any[], query: AggregationQuery) =>
   (event_store: any): any => {
-    const events_of_interest: string[] = R.uniq(
-      query.select.reduce((acc: any, attr: any) => {
-        return [...acc, ...events_by_payload(event_definitions).get(attr)];
-      }, [] as string[]),
-    );
     const initial_results = event_store.readAll({...query.where});
+    // initial_result(s) should be an  object that contains the value of query.order_by and other stuff
+    // We need to find the events that match the other attributes of initital_results
+    // But first map out the initial_results according to query.group_by
+    const results_map = initial_results.reduce(
+      (acc: any, result: any) => {
+        return acc.set(
+          R.path(query.where, result),
+          result,
+        );
+      }, new Map<string | number, any>());
+    console.log(Array.from(results_map.entries()));
     return undefined;
     // Start with the where clause
 
@@ -77,6 +83,7 @@ const group_by_aggregate = (event_definitions: any[], query: AggregationQuery) =
 };
 
 export {
+  group_by_aggregate,
   simple_aggregate,
   example_query,
 };
