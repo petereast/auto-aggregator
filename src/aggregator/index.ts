@@ -46,7 +46,7 @@ const staggered_group_by_aggregate = (
   // Prepare for when the query is actually made
 
   const navigator = navigate_relationship_map(
-    Object.entries(event_definitions),
+    Object.values(event_definitions),
     query_template.where_keys,
   );
 

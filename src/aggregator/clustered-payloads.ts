@@ -17,7 +17,7 @@ export default function(event_defs: any[]) {
         ...acc,
         [
           ...event.payload,
-          ...Object.entries(event.state)
+          ...(event.state ? Object.entries(event.state) : [])
             .map((state_change) => state_change[0]),
         ],
       ];
