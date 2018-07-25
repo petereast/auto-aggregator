@@ -4,6 +4,15 @@ import events_by_payload from './events-by-payload';
 
 export {events_by_payload};
 
+import {
+  get_state_change_by_event,
+  simple_aggregate,
+} from './simple-aggregator';
+
+import {
+  navigate_relationship_map,
+} from './relationship-map';
+
 const example_query = {
   select: [
     'invite_token',
@@ -17,77 +26,48 @@ const example_query = {
 
 export interface AggregationQuery {
   select: string[];
-  where: any;
-  group_by?: string[];
+  group_by: string[];
+  where_keys: string[];
 }
 
-const get_state_change_by_event = (event_definitions: any, event: any) => {
-  try {
-    const state_changes = Object.entries(event_definitions[event.type].state);
-    return state_changes.reduce((acc, change) => {
-      const c = {};
-      c[change[0]] = (change[1] as any).value;
-      return {...acc, ...c};
-    }, {});
-  } catch (e) {
-    return {};
-  }
-};
+export interface AggregationQueryPayloadCondition {
+  attr: string | number;
+}
 
-// TODO: Write a query parser in parser
-const simple_aggregate = (event_definitions: any[], query: AggregationQuery) =>
-  (events: any[]): any => {
-    // Get all the stuff related to what we need, then trim out the stuff we don't
-    const events_of_interest: string[] = R.uniq(
-      query.select.reduce((acc: any, attr: any) => {
-        return [...acc, ...events_by_payload(event_definitions).get(attr)];
-      }, [] as string[]),
-    );
+export interface AggregationQueryPayload {
+  where: AggregationQueryPayloadCondition[];
+}
 
-    const selected_events = R.filter((event) => {
-      return R.contains(event.type)(events_of_interest);
-    },
-      events,
-    );
+const staggered_group_by_aggregate = (
+  event_definitions: any,
+  event_store: any,
+  query_template: AggregationQuery,
+) => {
+  // Prepare for when the query is actually made
 
-    console.log(selected_events);
+  const navigator = navigate_relationship_map(
+    Object.entries(event_definitions),
+    query_template.where_keys,
+  );
 
-    return R.pick(query.select)(selected_events.reduce((acc, event) => {
-      return {
-        ...acc,
-        ...event.payload,
-        ...get_state_change_by_event(event_definitions, event),
-      };
-    }, {}));
-};
+  // Generate the condition paths we want based on the relationship maps
+  // paths follow the format ['a', 'b', 'c'] where 'a' is the starting
+  // "condition key" and 'c' is the "select from key"
 
-const generate_data_map = (event_definitions: any[]) => {
-  return undefined; // TODO: Get a clustered payload object
-};
+  const condition_paths = query_template.select.reduce(
+    (acc, term) => {
+      return [...acc, navigator(term)];
+    }, []);
 
-const group_by_aggregate = (event_definitions: any[], query: AggregationQuery) =>
-  (event_store: any): any => {
-    const initial_results = event_store.readAll({...query.where});
-    // initial_result(s) should be an  object that contains the value of query.order_by and other stuff
-    // We need to find the events that match the other attributes of initital_results
-    // But first map out the initial_results according to query.group_by
-    const results_map = initial_results.reduce(
-      (acc: any, result: any) => {
-        return acc.set(
-          R.path(query.where, result),
-          result,
-        );
-      }, new Map<string | number, any>());
-    console.log(Array.from(results_map.entries()));
+  console.log('CONDITION PATHS: ', condition_paths);
+
+  return (query_data: AggregationQueryPayload) => {
     return undefined;
-    // Start with the where clause
-
-    // Then fill in the rest of the information, maybe recursively, using
-    // attributes that are common between events as where?
+  };
 };
 
 export {
-  group_by_aggregate,
   simple_aggregate,
   example_query,
+  staggered_group_by_aggregate,
 };

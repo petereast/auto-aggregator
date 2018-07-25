@@ -43,6 +43,35 @@ const fake_event_pool = [
   },
 ];
 
+export const fake_event_defs = {
+  AccountInvitedToOrg: {
+    payload: [
+      'invite_token',
+      'name',
+      'organisation_id',
+      'organisation_type',
+    ],
+    state: {
+      membership_status: {
+        type: 'string',
+        value: 'PENDING',
+      },
+    },
+  },
+  AccountCreated: {
+    payload: [
+      'name',
+      'email',
+      'user_id',
+    ],
+  },
+  AccountInviteToOrgRevoked: {
+    payload: [
+      'invite_token',
+    ],
+  },
+};
+
 export const store = {
   readAll: (condition?: any) => {
     // Returns a filtered list of events from the fake_event_pool
