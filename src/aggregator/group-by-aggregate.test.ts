@@ -13,7 +13,7 @@ import {
   fake_event_defs,
 } from '../test-helper';
 
-test.only("The group by aggregate actually works", async (t) => {
+test.failing("The group by aggregate actually works", async (t) => {
   const example_query: AggregationQuery = {
     select: [
       'email',
