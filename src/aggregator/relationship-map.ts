@@ -34,13 +34,17 @@ const generate_relationship_graph = (event_defs: any[]) => {
 
 // I probably don't have to generate this intermediate tree,
 // the purpose of it is to help me think through the search strategy
-// Actually, it might be useful as it'll remove graph cycles??
+// Actually, it might be useful as it'll remove problems caused by graph cycles??
 const generate_relationship_tree = (
   start_point: string,
   event_relationships: Map<string, string[]>,
   explored_nodes: string[] = [],
 ): any => {
+  if (event_relationships.get(start_point) === undefined) {
+    console.log("UNDEFINED!!", Array.from(event_relationships.entries()));
+  }
   return {
+    // TODO: Add try-catch here to catch errors
     start_point,
     children: [
       ...R.difference(
@@ -69,18 +73,58 @@ const generate_relationship_tree = (
 const search_tree = (
   tree: any,
   search_term: string,
+  path: Path = [],
 ): Path => {
-  return [];
+  // Depth or bredth first search?
+  // probably depth?
+
+  if (tree.start_point === search_term) {
+    return [...path, tree.start_point];
+  } else {
+    return [
+      tree.start_point,
+      ...tree.children.reduce(
+        (acc: string[], child: any) => {
+          const explored_child = search_tree(
+            child,
+            search_term,
+            [...path],
+          );
+          if (!R.contains(search_term, explored_child)) {
+            return acc;
+          } else {
+            return explored_child;
+          }
+      }, []),
+    ];
+  }
 };
 
-const navigate_relationship_map = (event_defs: any[], start_point: string) => {
+const navigate_relationship_map = (event_defs: any[], start_points: string[]) => {
   // recursively find the route between start and end point
   // implement greedy-search or some algorithm for pathfinding
 
   const event_relationships = generate_relationship_graph(event_defs);
-  const attribute_tree = generate_relationship_tree(start_point, event_relationships);
-  return (end_point: string): Path => {
-    return [];
+  const attribute_trees: Map<string, any> = start_points.reduce(
+    (acc, start_point) => {
+      return acc.set(
+        start_point,
+        generate_relationship_tree(start_point, event_relationships),
+      );
+    }, new Map<string, any>());
+
+  return (end_point: string): Path[] => {
+    // Currently returns *a* valid path from one attribute to another, maybe
+    return start_points.reduce(
+      (acc, start_point) => {
+        return [
+          ...acc,
+          search_tree(
+            attribute_trees.get(start_point),
+            end_point,
+          ),
+        ];
+      }, []);
   };
 };
 
@@ -88,4 +132,5 @@ export {
   generate_relationship_graph,
   navigate_relationship_map,
   generate_relationship_tree,
+  search_tree,
 };

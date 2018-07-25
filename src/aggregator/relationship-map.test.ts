@@ -5,11 +5,12 @@ import {
   generate_relationship_graph,
   navigate_relationship_map,
   generate_relationship_tree,
+  search_tree,
 } from './relationship-map';
 
 const example_event_defs = {
   A: {
-    payload: ['a', 'b', 'c'],
+    payload: ['a', 'b', 'c', 'h'],
     state: {},
     sequence: 0,
   },
@@ -33,13 +34,13 @@ test("Generates a correct relationship map", async (t) => {
   t.deepEqual(
     Array.from(result.entries()),
     [
-      ['a', ['b', 'c']],
-      ['b', ['a', 'c']],
-      ['c', ['a', 'b', 'd', 'e', 'f']],
+      ['a', ['b', 'c', 'h']],
+      ['b', ['a', 'c', 'h']],
+      ['c', ['a', 'b', 'h', 'd', 'e', 'f']],
+      ['h', ['a', 'b', 'c', 'i', 'j']],
       ['d', ['c', 'e', 'f']],
       ['e', ['c', 'd', 'f']],
       ['f', ['c', 'd', 'e']],
-      ['h', ['i', 'j']],
       ['i', ['h', 'j']],
       ['j', ['h', 'i']],
     ],
@@ -52,7 +53,6 @@ test("Generates a correct relationship tree from a given start point", async (t)
   );
 
   const result = generate_relationship_tree('a', event_relationships);
-  console.log(util.inspect(result, false, null));
 
   t.deepEqual(
     result,
@@ -71,7 +71,48 @@ test("Generates a correct relationship tree from a given start point", async (t)
             {start_point: 'f', children: []},
           ],
         },
+        {
+          start_point: 'h',
+          children: [
+            {start_point: 'i', children: []},
+            {start_point: 'j', children: []},
+          ],
+        },
       ],
     },
+  );
+});
+
+test("The tree search function finds the correct path to a point", async (t) => {
+  const event_relationships = generate_relationship_graph(
+    Object.values(example_event_defs),
+  );
+
+  const relationship_tree = generate_relationship_tree(
+    'a',
+    event_relationships,
+  );
+
+  const result = search_tree(relationship_tree, 'f');
+
+  t.deepEqual(
+    result,
+    ['a', 'c', 'f'],
+  );
+});
+
+test("The whole thing works together nicely", async (t) => {
+  const result = navigate_relationship_map(
+    Object.values(example_event_defs),
+    ['a', 'b', 'c'],
+  )('f');
+
+  t.deepEqual(
+    result,
+    [
+      ['a', 'c', 'f'],
+      ['b', 'c', 'f'],
+      ['c', 'f'],
+    ],
   );
 });

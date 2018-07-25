@@ -10,6 +10,9 @@ export default function(event_defs: any[]) {
   const base: string[][] = [];
   return event_defs.reduce(
     (acc, event) => {
+      if (!event || !event.payload) {
+        return acc;
+      }
       return [
         ...acc,
         [

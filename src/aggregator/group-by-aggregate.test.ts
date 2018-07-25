@@ -1,29 +1,45 @@
 import test from 'ava';
 
 import {
-  group_by_aggregate,
   AggregationQuery,
+  staggered_group_by_aggregate,
 } from '.';
 
 import {
   read_events,
 } from '../parser';
-import {store} from '../test-helper';
+import {
+  store,
+  fake_event_defs,
+} from '../test-helper';
 
-test.failing("The group by aggregate actually works", async (t) => {
+test.only("The group by aggregate actually works", async (t) => {
   const example_query: AggregationQuery = {
     select: [
-      'something',
+      'email',
+      'name',
+      'organisation_id',
     ],
-    where: {
-      email: 'peter@repositive.io',
-    },
+    where_keys: [
+      'user_id',
+    ],
     group_by: [
       'organisation_id',
     ],
   };
-  const result = group_by_aggregate(read_events(), example_query)
-    (store);
-  console.log(result);
+
+  const aggregator = staggered_group_by_aggregate(
+    fake_event_defs,
+    store,
+    example_query,
+  );
+
+  console.log(aggregator({
+    where: [
+    {attr: 'something'},
+    ],
+  },
+  ));
+
   t.fail();
 });
