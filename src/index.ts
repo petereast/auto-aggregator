@@ -1,6 +1,6 @@
 import {read_events} from './parser';
 import * as R from 'ramda';
-import {events_by_payload, simple_aggregate, test_events, example_query} from './aggregator';
+import {events_by_payload, simple_aggregate, example_query} from './aggregator';
 
 console.log("[INFO] Startup...");
 const results = read_events();
