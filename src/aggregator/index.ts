@@ -10,7 +10,7 @@ import {
 } from './simple-aggregator';
 
 import {
-  navigate_relationship_map,
+  relationship_map_navigator,
 } from './relationship-map';
 
 const example_query = {
@@ -30,9 +30,8 @@ export interface AggregationQuery {
   where_keys: string[];
 }
 
-export interface AggregationQueryPayloadCondition {
-  attr: string | number;
-}
+export type AggregationQueryPayloadCondition = any;
+// TODO: Define this as a thang
 
 export interface AggregationQueryPayload {
   where: AggregationQueryPayloadCondition[];
@@ -45,7 +44,7 @@ const staggered_group_by_aggregate = (
 ) => {
   // Prepare for when the query is actually made
 
-  const navigator = navigate_relationship_map(
+  const navigator = relationship_map_navigator(
     Object.values(event_definitions),
     query_template.where_keys,
   );
@@ -56,11 +55,13 @@ const staggered_group_by_aggregate = (
 
   const condition_paths = query_template.select.reduce(
     (acc, term) => {
+      // TODO: Compile these paths into a(nother) tree-like structure to traverse
+      // breadth-first
       return [...acc, navigator(term)];
     }, []);
 
   console.log('CONDITION PATHS: ', condition_paths);
-
+  // In other words, to get that overall aggregate, these paths have to be fulfilled.
   return (query_data: AggregationQueryPayload) => {
     return undefined;
   };

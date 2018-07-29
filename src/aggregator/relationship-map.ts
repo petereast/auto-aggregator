@@ -100,7 +100,7 @@ const search_tree = (
   }
 };
 
-const navigate_relationship_map = (event_defs: any[], start_points: string[]) => {
+const relationship_map_navigator = (event_defs: any[], start_points: string[]) => {
   // recursively find the route between start and end point
   // implement greedy-search or some algorithm for pathfinding
 
@@ -128,9 +128,29 @@ const navigate_relationship_map = (event_defs: any[], start_points: string[]) =>
   };
 };
 
+interface ConditonPath {
+  value: string;
+  children: ConditonPath[];
+}
+
+const generate_condition_path_tree = (condition_paths: string[][]): ConditonPath => {
+  // TODO: Implement some sort of DS for this
+  // A Tree?
+
+  // Somehow track something
+  return condition_paths.reduce(
+    (acc, path, paths_index, _condition_paths) => {
+      const p = path.reduce(
+        (_acc, step) => {
+          return _acc;
+        }, "");
+      return acc;
+    }, {} as ConditonPath);
+};
+
 export {
   generate_relationship_graph,
-  navigate_relationship_map,
+  relationship_map_navigator,
   generate_relationship_tree,
   search_tree,
 };

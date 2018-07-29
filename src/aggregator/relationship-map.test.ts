@@ -3,7 +3,7 @@ import * as util from 'util';
 
 import {
   generate_relationship_graph,
-  navigate_relationship_map,
+  relationship_map_navigator,
   generate_relationship_tree,
   search_tree,
 } from './relationship-map';
@@ -102,7 +102,7 @@ test("The tree search function finds the correct path to a point", async (t) => 
 });
 
 test("The whole thing works together nicely", async (t) => {
-  const result = navigate_relationship_map(
+  const result = relationship_map_navigator(
     Object.values(example_event_defs),
     ['a', 'b', 'c'],
   )('f');

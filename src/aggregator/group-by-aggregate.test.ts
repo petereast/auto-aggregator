@@ -36,7 +36,7 @@ test.failing("The group by aggregate actually works", async (t) => {
 
   console.log(aggregator({
     where: [
-    {attr: 'something'},
+    {user_id: 'something'},
     ],
   },
   ));
