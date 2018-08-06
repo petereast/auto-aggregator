@@ -64,6 +64,13 @@ const staggered_group_by_aggregate = (
   // In other words, to get that overall aggregate, these paths have to be fulfilled.
   return (query_data: AggregationQueryPayload) => {
     return undefined;
+    // Initially select by query_data.where
+    //
+    // For each 'condition path', find where the relationships lie
+    // It'll form a tree-like data structure, (this should probably be optimised)
+    // this DS will be a representation of all the connected knowledge
+    // This should then be trimmed down, yet still remain accessable to the
+    // programmer
   };
 };
 
