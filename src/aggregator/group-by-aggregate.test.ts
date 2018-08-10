@@ -13,7 +13,7 @@ import {
   fake_event_defs,
 } from '../test-helper';
 
-test.failing("The group by aggregate actually works", async (t) => {
+test("The group by aggregate actually works", async (t) => {
   const example_query: AggregationQuery = {
     select: [
       'email',
@@ -34,12 +34,17 @@ test.failing("The group by aggregate actually works", async (t) => {
     example_query,
   );
 
-  console.log(aggregator({
-    where: [
-    {user_id: 'something'},
-    ],
-  },
-  ));
+  const result = await aggregator({
+      where: [
+        {user_id: '3'},
+      ],
+    },
+  );
 
-  t.fail();
+  console.log("AGGREGATE RESULT:", result);
+
+  t.deepEqual(
+    result,
+    {something: "else"},
+  );
 });
