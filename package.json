@@ -7,7 +7,7 @@
     "compile": "tsc",
     "start": "node dist/index.js",
     "lint": "tslint --project tsconfig.json",
-    "test": "ava-ts src/**/*.test.ts"
+    "test": "ava-ts"
   },
   "repository": {
     "type": "git",
