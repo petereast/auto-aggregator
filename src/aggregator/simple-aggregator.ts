@@ -39,8 +39,6 @@ const simple_aggregate = (event_definitions: any[], query: SimpleAggregationQuer
       events,
     );
 
-    console.log(selected_events);
-
     return R.pick(query.select)(selected_events.reduce((acc, event) => {
       return {
         ...acc,
