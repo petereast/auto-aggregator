@@ -103,6 +103,7 @@ const search_tree = (
 const relationship_map_navigator = (event_defs: any[], start_points: string[]) => {
   // recursively find the route between start and end point
   // implement greedy-search or some algorithm for pathfinding
+  // TODO: Think of a better solution
 
   const event_relationships = generate_relationship_graph(event_defs);
   const attribute_trees: Map<string, any> = start_points.reduce(
