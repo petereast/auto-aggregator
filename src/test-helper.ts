@@ -20,6 +20,13 @@ const fake_event_pool = [
     },
   },
   {
+    type: "AccountEmailUpdated",
+    payload: {
+      user_id: '3',
+      email: 'poter@repositive.io',
+    },
+  },
+  {
     type: "AccountInviteToOrgRevoked",
     payload: {
       invite_token: '1',
@@ -70,6 +77,12 @@ export const fake_event_defs = {
       'invite_token',
     ],
   },
+  AccountEmailUpdated: {
+    payload: [
+      'user_id',
+      'email',
+    ],
+  },
 };
 
 export const store = {
@@ -89,7 +102,6 @@ export const store = {
             (acc, entry) => {
               // Entry is a [key, value] array
               if (R.path([entry[0]])(condition)) {
-                console.log("ENTRY", entry);
                 return acc || entry[1] === R.path([entry[0]])(condition);
               }
               return acc;
