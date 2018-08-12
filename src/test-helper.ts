@@ -9,6 +9,7 @@ const fake_event_pool = [
       name: 'stev',
       organisation_id: '2',
       organisation_type: 'something',
+      email: 'peter@repositive.io',
     },
   },
   {
