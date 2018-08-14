@@ -6,7 +6,7 @@ const fake_event_pool = [
     type: "AccountInvitedToOrg",
     payload: {
       invite_token: '1',
-      name: 'stev',
+      invited_name: 'stev',
       organisation_id: '2',
       organisation_type: 'something',
       email: 'peter@repositive.io',
@@ -25,6 +25,21 @@ const fake_event_pool = [
     payload: {
       user_id: '3',
       email: 'poter@repositive.io',
+    },
+  },
+  {
+    type: "AccountInviteToOrgAccepted",
+    payload: {
+      user_id: '3',
+      organisation_id: '2',
+
+    },
+  },
+  {
+    type: "AccountEmailUpdated",
+    payload: {
+      user_id: '3',
+      email: 'pater@repositive.io',
     },
   },
   {
@@ -55,7 +70,7 @@ export const fake_event_defs = {
   AccountInvitedToOrg: {
     payload: [
       'invite_token',
-      'name',
+      'invite_name',
       'organisation_id',
       'organisation_type',
     ],
@@ -63,6 +78,18 @@ export const fake_event_defs = {
       membership_status: {
         type: 'string',
         value: 'PENDING',
+      },
+    },
+  },
+  AccountInviteToOrgAccepted: {
+    payload: [
+      'user_id',
+      'organisation_id',
+    ],
+    state: {
+      membership_status: {
+        type: 'string',
+        value: 'ACCEPTED',
       },
     },
   },
@@ -93,6 +120,7 @@ export const store = {
     if (!condition) {
       return fake_event_pool;
     } else {
+      console.log(condition);
       return fake_event_pool.filter(
         (item) => {
           let isType = false;
