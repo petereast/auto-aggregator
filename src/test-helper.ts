@@ -131,12 +131,12 @@ export const store = {
       return R.sort(
         (a, b) => a.time - b.time,
         fake_event_pool.filter(
-          (item) => {
+          (event) => {
             let isType = false;
             if (condition.type) {
-              isType = item.type === condition.type;
+              isType = event.type === condition.type;
             }
-            return isType || Object.entries(item.payload).reduce(
+            return isType || Object.entries(event.payload).reduce(
               (acc, entry) => {
                 // Entry is a [key, value] array
                 if (R.path([entry[0]])(condition)) {
