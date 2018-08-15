@@ -26,7 +26,7 @@ const example_event_defs = {
   },
 };
 
-test("Generates a correct relationship map", async (t) => {
+test("Generates a correct adjacency matrix for the relationships between event payloads", async (t) => {
   const result = generate_relationship_graph(
     Object.values(example_event_defs),
   );
@@ -92,6 +92,8 @@ test("The tree search function finds the correct path to a point", async (t) => 
     'a',
     event_relationships,
   );
+
+  // TODO: Make these functions composable
 
   const result = search_tree(relationship_tree, 'f');
 

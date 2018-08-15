@@ -1,7 +1,21 @@
 import * as R from 'ramda';
 import clustered_payloads from './clustered-payloads';
 
+//
+// TYPE DEFINITIONS
+//
+
 type Path = string[];
+
+interface AttributeNode {
+  start_point: string;
+  children: AttributeNode[];
+}
+
+type AttribtueTree = AttributeNode;
+
+// Implementation
+
 const generate_relationship_graph = (event_defs: any[]) => {
   const relationships = clustered_payloads(event_defs);
   const attr_union = relationships.reduce(
@@ -35,6 +49,8 @@ const generate_relationship_graph = (event_defs: any[]) => {
 // I probably don't have to generate this intermediate tree,
 // the purpose of it is to help me think through the search strategy
 // Actually, it might be useful as it'll remove problems caused by graph cycles??
+//
+// TODO: Redefine this algorithm - see TODO in index.ts
 const generate_relationship_tree = (
   start_point: string,
   event_relationships: Map<string, string[]>,
@@ -100,10 +116,14 @@ const search_tree = (
   }
 };
 
-const relationship_map_navigator = (event_defs: any[], start_points: string[]) => {
+const relationship_map_navigator = (
+  event_defs: any[],
+  start_points: string[],
+) => {
   // recursively find the route between start and end point
   // implement greedy-search or some algorithm for pathfinding
   // TODO: Think of a better solution
+  // I NEED TO THINK ABOUT THIS DIFFERENTLY
 
   const event_relationships = generate_relationship_graph(event_defs);
   const attribute_trees: Map<string, any> = start_points.reduce(
@@ -129,6 +149,30 @@ const relationship_map_navigator = (event_defs: any[], start_points: string[]) =
   };
 };
 
+const relationship_map_navigator_2 = (
+  event_defs: any[],
+  start_points: string[],
+): (end_points: string[]) => Path => {
+
+  const event_relationships = generate_relationship_graph(event_defs);
+  const attribute_trees: Map<string, AttribtueTree> = start_points.reduce(
+    (acc, start_point) => {
+      return acc.set(
+        start_point,
+        generate_relationship_tree(start_point, event_relationships),
+      );
+    }, new Map<string, AttribtueTree>());
+
+  return (end_points: string[]): Path => {
+
+    // All the end_points should be at the end of the output
+    // The end_points have dependencies, which may have other dependencies
+    // so basically, find all the dependencies!!
+
+    return [];
+  };
+};
+
 interface ConditonPath {
   value: string;
   children: ConditonPath[];
@@ -137,6 +181,8 @@ interface ConditonPath {
 const generate_condition_path_tree = (condition_paths: string[][]): ConditonPath => {
   // TODO: Implement some sort of DS for this
   // A Tree?
+  //
+  // NOTE: This will no longer be needed once work in the paths dept is complete
 
   // Somehow track something
   return condition_paths.reduce(

@@ -28,6 +28,8 @@ const example_query = {
   },
 };
 
+// TYPE DEFINITIONS
+
 export interface AggregationQuery {
   select: string[];
   group_by: string[];
@@ -40,6 +42,10 @@ export type AggregationQueryPayloadCondition = any;
 export interface AggregationQueryPayload {
   where: AggregationQueryPayloadCondition[];
 }
+
+export type EventsKnowledge = any;
+
+// end of type definitions
 
 const staggered_group_by_aggregate = (
   event_definitions: any,
@@ -65,9 +71,9 @@ const staggered_group_by_aggregate = (
     }, []);
 
   const prepare_knowledge = (
-    current_knowledge: any,
+    current_knowledge: EventsKnowledge,
     new_information: any[], // as an array of events
-  ) => {
+  ): EventsKnowledge => {
     // TODO: Define types for these structures
     //
     // Knowledge {
@@ -79,7 +85,7 @@ const staggered_group_by_aggregate = (
         (_acc, entry) => {
             const [key, value] = entry;
 
-            if (_acc[key]) {
+            if (R.has(key, _acc)) {
               _acc[key].push(value);
             } else {
               _acc[key] = [value];
@@ -116,39 +122,53 @@ const staggered_group_by_aggregate = (
 
     // TODO: This thing currently keeps on re-aggregating past events because the aggregate path
     // is full of duplicates. Maybe a solution to this problem would be to just have a union of the condition paths?
+    // UPDATE 1: It turns out this is a bigger problem than I thought, we need to think about the condition path as
+    // a tree, where the leaf nodes are the data we want to find and the non-leaf nodes are the links between those
+    // events
+    // UPDATE 2: I need to make a couple of changes to the `navigator` function - so that it returns an array of
+    // attributes, in order of their dependencies so that there is a single-dimensional array that can be iterated
+    // through.
+
+    console.log("CONDITION_PATHS:", condition_paths);
     const result = condition_paths.reduce(
       (_known_information, condition_path) => {
-        console.log("NEXT PATH");
+        console.log("NEXT PATH:", condition_path);
         return condition_path.reduce(
           (known_information, condition) => {
             console.log("KNOWN", known_information);
             const matching_events = event_store.readAll(
               {
-                [condition]: known_information[condition][0],
+                [condition]: known_information[condition].reverse()[0],
                 // Ensure that this value here is always the most up to data thang.
+                // TODO: Don't forget to handle state changes somewhere - this is where
+                // it blows up if selecting a state variable
               },
             );
 
             console.log("MATCHES:", matching_events);
-            // TODO: Generate knowledge structure from new events
+            console.log("\n\n");
 
-            const return_value =  prepare_knowledge(
+            return prepare_knowledge(
               known_information,
               matching_events,
             );
-
-            return return_value;
-          }, _known_information);
+          }, _known_information );
       }, await knowledge );
 
-    const layered_result = R.pick(
-      query_template.select,
-      await result);
+    console.log("\n\nFINAL_KNOWLEDGE:", await result);
 
-    return R.map(
-      (item: any[]) => item.reverse()[0],
-      layered_result as any, // TODO: Work out wtf is going on here
-    );
+    return R.pipe(
+      R.map(
+        R.reverse,
+      ),
+      R.map(
+       (event_stack) => event_stack[0],
+      ),
+      R.pick(
+        query_template.select,
+      ),
+    )(await result);
+
     // Initially select by query_data.where
     //
     // For each 'condition path', find where the relationships lie
