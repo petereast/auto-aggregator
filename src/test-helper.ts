@@ -11,6 +11,7 @@ const fake_event_pool = [
       organisation_type: 'something',
       email: 'peter@repositive.io',
     },
+    time: 1,
   },
   {
     type: "AccountCreated",
@@ -19,6 +20,7 @@ const fake_event_pool = [
       email: 'peter@repositive.io',
       user_id: '3',
     },
+    time: 2,
   },
   {
     type: "AccountEmailUpdated",
@@ -26,14 +28,15 @@ const fake_event_pool = [
       user_id: '3',
       email: 'poter@repositive.io',
     },
+    time: 3,
   },
   {
     type: "AccountInviteToOrgAccepted",
     payload: {
       user_id: '3',
       organisation_id: '2',
-
     },
+    time: 4,
   },
   {
     type: "AccountEmailUpdated",
@@ -41,12 +44,14 @@ const fake_event_pool = [
       user_id: '3',
       email: 'pater@repositive.io',
     },
+    time: 5,
   },
   {
     type: "AccountInviteToOrgRevoked",
     payload: {
       invite_token: '1',
     },
+    time: 6,
   },
   {
     type: "AccountCreated",
@@ -55,6 +60,7 @@ const fake_event_pool = [
       email: 'john@repositive.io',
       user_id: '4',
     },
+    time: 7,
   },
   {
     type: 'AccountCreated',
@@ -63,6 +69,7 @@ const fake_event_pool = [
       email: 'never@trust.orang',
       user_id: '5',
     },
+    time: 8,
   },
 ];
 
@@ -121,22 +128,24 @@ export const store = {
       return fake_event_pool;
     } else {
       console.log(condition);
-      return fake_event_pool.filter(
-        (item) => {
-          let isType = false;
-          if (condition.type) {
-            isType = item.type === condition.type;
-          }
-          return isType || Object.entries(item.payload).reduce(
-            (acc, entry) => {
-              // Entry is a [key, value] array
-              if (R.path([entry[0]])(condition)) {
-                return acc || entry[1] === R.path([entry[0]])(condition);
-              }
-              return acc;
-            }, false);
-          return true;
-        });
+      return R.sort(
+        (a, b) => a.time - b.time,
+        fake_event_pool.filter(
+          (item) => {
+            let isType = false;
+            if (condition.type) {
+              isType = item.type === condition.type;
+            }
+            return isType || Object.entries(item.payload).reduce(
+              (acc, entry) => {
+                // Entry is a [key, value] array
+                if (R.path([entry[0]])(condition)) {
+                  return acc || entry[1] === R.path([entry[0]])(condition);
+                }
+                return acc;
+              }, false);
+            return true;
+          }));
     }
   },
 };
