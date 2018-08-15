@@ -1,5 +1,8 @@
+**THIS WHOLE THING IS A MASSIVE WIP**
+
 # auto-aggregator
 Something to asynchronously aggregate events based on documentation
+
 [![Build Status](https://travis-ci.com/petereast/auto-aggregator.svg?token=EWWgC6LaBqjXrVpoahqn&branch=master)](https://travis-ci.com/petereast/auto-aggregator)
 
 This whole thing works on the concept of *knowledge representation*, we can represent what we know,
