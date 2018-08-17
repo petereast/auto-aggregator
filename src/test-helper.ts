@@ -71,6 +71,17 @@ const fake_event_pool = [
     },
     time: 8,
   },
+  {
+    type: "AccountInvitedToOrg",
+    payload: {
+      invite_token: '4',
+      invited_name: 'stev',
+      organisation_id: '3',
+      organisation_type: 'something',
+      email: 'pater@repositive.io',
+    },
+    time: 9,
+  },
 ];
 
 export const fake_event_defs = {
