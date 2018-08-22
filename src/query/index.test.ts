@@ -1,15 +1,31 @@
 import test from 'ava';
+import * as R from 'ramda';
 import {query_builder} from '.';
 
 test.only("Check that basic query functionality works", async (t) => {
   const x = query_builder.create()
     .select("pop")
     .select("wang")
+    .select(['other', 'key'])
     .where()
-      .key("key").equal("value")
+      .key("another_key").equal("value")
     .where()
-      .key("key").equal("something");
+      .key("key").equal("something")
+    .where()
+      .key("yet_another_key").not_equal("not this!");
 
-  console.log(x._select_terms);
-  t.fail();
+  t.deepEqual(
+    R.pick(["_select_terms", "_conditions"], x),
+    {
+      _select_terms: ["pop", "wang", "other", "key"],
+      _conditions: {
+        eq: {
+          another_key: "value",
+          key: "something",
+        },
+        neq: {
+          yet_another_key: "not this!",
+        },
+      },
+    });
 });
