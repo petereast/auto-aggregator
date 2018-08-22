@@ -31,13 +31,22 @@ export const query_builder: QueryBuilder = {
     },
     where(conditions?: any) {
       if (conditions) {
-        return this._select_conditions(conditions);
+        const output = Object.entries(conditions).reduce(
+          (acc, cond) => {
+            return condition_chain_builder.create(acc)
+              .key(cond[0])
+              .equal(cond[1]);
+          },
+          this,
+        );
+
+        console.log("OUTPUT:", output);
+        return output;
       } else {
-        console.log("where");
         return condition_chain_builder.create(this);
       }
     },
-    _set_condition(cond: Condition) {
+  _set_condition(cond: Condition) {
       return R.set(
         R.lensPath(['_conditions', cond.operation as any, cond.key]),
         cond.value,
