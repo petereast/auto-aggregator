@@ -2,20 +2,14 @@
 // The idea is to have a composable 'query builder' that's functional and lovely
 import * as R from 'ramda';
 
-interface Query {
-  _select_terms: string[];
-  _conditions: any;
-
-  select: (term: string | string[]) => Query;
-  where: () => any; // Returns condition chain builder
-
-  _set_condition: (cond: any) => any;
-}
-
-export interface QueryBuilder {
-  create: () => Query;
-  query: Query;
-}
+import {
+  Query,
+  QueryBuilder,
+  ConditionChainBuilder,
+  ConditionChain,
+  ConditionBuilder,
+  Condition,
+} from './types';
 
 export const query_builder: QueryBuilder = {
   create() {
@@ -53,17 +47,6 @@ export const query_builder: QueryBuilder = {
   },
 };
 
-interface ConditionChainBuilder {
-  create: (_parent: Query) => ConditionChain;
-  condition_chain: ConditionChain;
-}
-
-interface ConditionChain {
-  parent: Query | undefined;
-  key: (item: string) => Condition;
-  and: () => null;
-}
-
 const condition_chain_builder: ConditionChainBuilder = {
   create(_parent: Query) {
     const tmp = Object.create(this.condition_chain);
@@ -82,22 +65,6 @@ const condition_chain_builder: ConditionChainBuilder = {
     },
   },
 };
-
-interface ConditionBuilder {
-  condition: Condition;
-  create: (_parent: Query, key: string) => Condition;
-}
-
-interface Condition {
-  parent: Query | undefined;
-  // All evaluations should return a query
-  key: string;
-  operation: 'eq' | 'neq' | undefined;
-  value: any;
-
-  equal: (value: any) => Query;
-  not_equal: (value: any) => Query;
-}
 
 const ConditionBuilder: ConditionBuilder = {
   create(_parent: any, _key: string) {
