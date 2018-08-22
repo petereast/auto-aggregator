@@ -162,6 +162,13 @@ const relationship_map_navigator_2 = (
         generate_relationship_tree(start_point, event_relationships),
       );
     }, new Map<string, AttribtueTree>());
+  const find_attribute_dependencies = (attribute: string): string[] => {
+    // TODO: Define dependancies
+    // An Attribute's dependancies are defined as:
+    //   The attribute value(s) that must be known to find the target attribute
+    //   value
+    return [];
+  };
 
   return (end_points: string[]): Path => {
 
@@ -169,7 +176,13 @@ const relationship_map_navigator_2 = (
     // The end_points have dependencies, which may have other dependencies
     // so basically, find all the dependencies!!
 
-    return [];
+    return end_points.reduce(
+      (acc, end_point) => {
+
+        return acc;
+      },
+      [],
+    );
   };
 };
 

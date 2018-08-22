@@ -13,7 +13,7 @@ import {
   fake_event_defs,
 } from '../test-helper';
 
-test.failing("The group by aggregate actually works", async (t) => {
+test("The aggregator selects correct information for a simple aggregation", async (t) => {
   const example_query: AggregationQuery = {
     select: [
       'email',
@@ -53,3 +53,7 @@ test.failing("The group by aggregate actually works", async (t) => {
     } as any,
   );
 });
+
+test.todo("The aggregator returns correct information for 'grouped' aggregations");
+
+test.todo("The aggregator returns multiple possible values when necessary");

@@ -65,10 +65,16 @@ const staggered_group_by_aggregate = (
 
   const condition_paths = query_template.select.reduce(
     (acc, term) => {
-      // TODO: Compile these paths into a(nother) tree-like structure to traverse
-      // breadth-first
       return [...acc, ...navigator(term)];
-    }, []);
+    },
+    [],
+  )
+    // Merge the paths into one
+    // TODO: Make this more intelligent
+    // so that the items are in order of dependencies
+    .reduce((acc, path) => R.union(acc, path), []);
+
+  console.log("CPATH:", condition_paths);
 
   const prepare_knowledge = (
     current_knowledge: EventsKnowledge,
@@ -79,6 +85,7 @@ const staggered_group_by_aggregate = (
     // Knowledge {
     //    key?: [old_values..., new_value];
     // }
+
     return new_information.reduce(
       (acc, event) => {
       return Object.entries(event.payload).reduce(
@@ -128,12 +135,15 @@ const staggered_group_by_aggregate = (
     // UPDATE 2: I need to make a couple of changes to the `navigator` function - so that it returns an array of
     // attributes, in order of their dependencies so that there is a single-dimensional array that can be iterated
     // through.
+    //
+    // This should always return the values associated, regardless of which ones are current or not
+    // Also the group-by algorithm is IMPORTANT!!
 
     console.log("CONDITION_PATHS:", condition_paths);
     const result = condition_paths.reduce(
       (_known_information, condition_path) => {
         console.log("NEXT PATH:", condition_path);
-        return condition_path.reduce(
+        return [condition_path].reduce(
           (known_information, condition) => {
             console.log("KNOWN", known_information);
             const matching_events = event_store.readAll(
