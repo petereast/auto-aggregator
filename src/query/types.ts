@@ -1,10 +1,14 @@
 // Type definitions for the query builder
+
+type WhereWithConditions = (conditions: any) => Query;
+type WhereWithoutConditions = () => ConditionChainBuilder;
+
 export interface Query {
   _select_terms: string[];
   _conditions: any;
 
   select: (term: string | string[]) => Query;
-  where: () => any; // Returns condition chain builder
+  where: any;
 
   _set_condition: (cond: any) => any;
 }

@@ -7,6 +7,7 @@ test.only("Check that basic query functionality works", async (t) => {
     .select("pop")
     .select("wang")
     .select(['other', 'key'])
+    .where({x: 'y'})
     .where()
       .key("another_key").equal("value")
     .where()
@@ -22,6 +23,7 @@ test.only("Check that basic query functionality works", async (t) => {
         eq: {
           another_key: "value",
           key: "something",
+          x: 'y',
         },
         neq: {
           yet_another_key: "not this!",
