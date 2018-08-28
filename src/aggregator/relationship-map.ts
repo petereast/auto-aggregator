@@ -172,17 +172,12 @@ const relationship_map_navigator_2 = (
 
   return (end_points: string[]): Path => {
 
-    // All the end_points should be at the end of the output
-    // The end_points have dependencies, which may have other dependencies
-    // so basically, find all the dependencies!!
-
+    // Resolve all the dependencies of end_points (recursively)?
     return end_points.reduce(
       (acc, end_point) => {
-
-        return acc;
+        return [...acc, end_point];
       },
-      [],
-    );
+      []);
   };
 };
 
