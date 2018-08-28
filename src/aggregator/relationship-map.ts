@@ -167,17 +167,42 @@ const relationship_map_navigator_2 = (
     // An Attribute's dependancies are defined as:
     //   The attribute value(s) that must be known to find the target attribute
     //   value
+
+    // There needs to be some logic to detect circular dependencies
     return [];
   };
 
   return (end_points: string[]): Path => {
+    // Recursively find dependencies
+    const r_find_deps = (target: string, dependencies: string[]) => {
+      const new_deps = event_relationships.get(target);
 
-    // Resolve all the dependencies of end_points (recursively)?
-    return end_points.reduce(
-      (acc, end_point) => {
-        return [...acc, end_point];
-      },
-      []);
+      // For each new dep, only add it to the beginning of list
+      // if the dep is not higher up the list tham the target
+      // return [new_dep, ...deps]
+
+      return new_deps.reduce(
+        (acc, dep) => {
+          const target_pos = acc.find(target);
+          const dep_pos = acc.find(dep);
+
+          if (dep_pos === -1) {
+            // Add dep to beginning
+          } else if (dep_pos < target_pos) {
+            // Move dep to beginning
+          } else {
+            // Leave dep
+          };
+
+          return acc;
+        }, 
+        [...dependencies, ...end_points],
+      );
+    };
+
+    const deps: string[] = [];
+
+    return R.uniq(deps);
   };
 };
 

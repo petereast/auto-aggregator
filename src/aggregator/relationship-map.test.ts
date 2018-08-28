@@ -118,3 +118,9 @@ test("The whole thing works together nicely", async (t) => {
     ],
   );
 });
+
+test.only("The new dependency resolver works", async (t) => {
+  const result = null;
+
+  t.fail();
+});
