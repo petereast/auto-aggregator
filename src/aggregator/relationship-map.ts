@@ -1,5 +1,9 @@
 import * as R from 'ramda';
+import merge_dependencies from './dependency-processor';
 import clustered_payloads from './clustered-payloads';
+
+// TODO: This file is massive, make sure you refactor this at some
+// point.
 
 //
 // TYPE DEFINITIONS
@@ -122,8 +126,6 @@ const relationship_map_navigator = (
 ) => {
   // recursively find the route between start and end point
   // implement greedy-search or some algorithm for pathfinding
-  // TODO: Think of a better solution
-  // I NEED TO THINK ABOUT THIS DIFFERENTLY
 
   const event_relationships = generate_relationship_graph(event_defs);
   const attribute_trees: Map<string, any> = start_points.reduce(
@@ -134,75 +136,31 @@ const relationship_map_navigator = (
       );
     }, new Map<string, any>());
 
-  return (end_point: string): Path[] => {
-    // Currently returns *a* valid path from one attribute to another, maybe
-    return start_points.reduce(
-      (acc, start_point) => {
-        return [
-          ...acc,
-          search_tree(
-            attribute_trees.get(start_point),
-            end_point,
-          ),
-        ];
-      }, []);
-  };
-};
-
-const relationship_map_navigator_2 = (
-  event_defs: any[],
-  start_points: string[],
-): (end_points: string[]) => Path => {
-
-  const event_relationships = generate_relationship_graph(event_defs);
-  const attribute_trees: Map<string, AttribtueTree> = start_points.reduce(
-    (acc, start_point) => {
-      return acc.set(
-        start_point,
-        generate_relationship_tree(start_point, event_relationships),
-      );
-    }, new Map<string, AttribtueTree>());
-  const find_attribute_dependencies = (attribute: string): string[] => {
-    // TODO: Define dependancies
-    // An Attribute's dependancies are defined as:
-    //   The attribute value(s) that must be known to find the target attribute
-    //   value
-
-    // There needs to be some logic to detect circular dependencies
-    return [];
-  };
-
   return (end_points: string[]): Path => {
-    // Recursively find dependencies
-    const r_find_deps = (target: string, dependencies: string[]) => {
-      const new_deps = event_relationships.get(target);
+    // Currently returns *a* valid path from one attribute to another, maybe
 
-      // For each new dep, only add it to the beginning of list
-      // if the dep is not higher up the list tham the target
-      // return [new_dep, ...deps]
+    // TODO: Refactor this, it's nasty :(
+    const paths: string[][] = end_points.reduce(
+      (acc, end_point) => {
+        return [...acc, ...start_points.reduce(
+          (_acc, start_point) => {
+            return [
+              ..._acc,
+              search_tree(
+                attribute_trees.get(start_point),
+                end_point,
+              ),
+            ];
+          },
+          [],
+        )];
+      },
+      [],
+    );
 
-      return new_deps.reduce(
-        (acc, dep) => {
-          const target_pos = acc.find(target);
-          const dep_pos = acc.find(dep);
+    console.log('path', merge_dependencies(paths));
 
-          if (dep_pos === -1) {
-            // Add dep to beginning
-          } else if (dep_pos < target_pos) {
-            // Move dep to beginning
-          } else {
-            // Leave dep
-          };
-
-          return acc;
-        }, 
-        [...dependencies, ...end_points],
-      );
-    };
-
-    const deps: string[] = [];
-
-    return R.uniq(deps);
+    return merge_dependencies(paths);
   };
 };
 

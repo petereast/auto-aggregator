@@ -107,20 +107,10 @@ test("The whole thing works together nicely", async (t) => {
   const result = relationship_map_navigator(
     Object.values(example_event_defs),
     ['a', 'b', 'c'],
-  )('f');
+  )(['f']);
 
   t.deepEqual(
     result,
-    [
-      ['a', 'c', 'f'],
-      ['b', 'c', 'f'],
-      ['c', 'f'],
-    ],
+    ['a', 'b', 'c', 'f'],
   );
-});
-
-test.only("The new dependency resolver works", async (t) => {
-  const result = null;
-
-  t.fail();
 });
