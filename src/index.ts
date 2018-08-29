@@ -22,4 +22,4 @@ const results = read_events();
 //  { sequence: 1,
 //    payload: [ 'name', 'email', 'user_id' ],
 //    triggers: [ 'AccountInviteToOrgAccepted' ] } }
-//:
+// :
