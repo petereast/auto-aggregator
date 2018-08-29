@@ -63,18 +63,12 @@ const staggered_group_by_aggregate = (
   // the format ['a', 'b', 'c'] where 'a' is the starting "condition key" and 'c' is
   // the "select from key"
 
-  const condition_paths = query_template.select.reduce(
-    (acc, term) => {
-      return [...acc, ...navigator(term)];
-    },
-    [],
-  )
+  const condition_path = navigator(query_template.select);
     // Merge the paths into one
     // TODO: Make this more intelligent
     // so that the items are in order of dependencies
-    .reduce((acc, path) => R.union(acc, path), []);
 
-  console.log("CPATH:", condition_paths);
+  console.log("CPATH:", condition_path);
 
   const prepare_knowledge = (
     current_knowledge: EventsKnowledge,
@@ -139,31 +133,27 @@ const staggered_group_by_aggregate = (
     // This should always return the values associated, regardless of which ones are current or not
     // Also the group-by algorithm is IMPORTANT!!
 
-    console.log("CONDITION_PATHS:", condition_paths);
-    const result = condition_paths.reduce(
-      (_known_information, condition_path) => {
-        console.log("NEXT PATH:", condition_path);
-        return [condition_path].reduce(
-          (known_information, condition) => {
-            console.log("KNOWN", known_information);
-            const matching_events = event_store.readAll(
-              {
-                [condition]: known_information[condition].reverse()[0],
-                // Ensure that this value here is always the most up to data thang.
-                // TODO: Don't forget to handle state changes somewhere - this is where
-                // it blows up if selecting a state variable
-              },
-            );
+    console.log("CONDITION_PATHS:", condition_path);
+    const result = condition_path.reduce(
+      (known_information: any, condition: string) => {
+          console.log("KNOWN", known_information);
+          const matching_events = event_store.readAll(
+            {
+              [condition]: known_information[condition].reverse()[0],
+              // Ensure that this value here is always the most up to data thang.
+              // TODO: Don't forget to handle state changes somewhere - this is where
+              // it blows up if selecting a state variable
+            },
+          );
 
-            console.log("MATCHES:", matching_events);
-            console.log("\n\n");
+          console.log("MATCHES:", matching_events);
+          console.log("\n\n");
 
-            return prepare_knowledge(
-              known_information,
-              matching_events,
-            );
-          }, _known_information );
-      }, await knowledge );
+          return prepare_knowledge(
+            known_information,
+            matching_events,
+          );
+        }, await knowledge);
 
     console.log("\n\nFINAL_KNOWLEDGE:", await result);
 
