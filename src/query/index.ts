@@ -40,7 +40,6 @@ export const query_builder: QueryBuilder = {
           this,
         );
 
-        console.log("OUTPUT:", output);
         return output;
       } else {
         return condition_chain_builder.create(this);
@@ -66,7 +65,6 @@ const condition_chain_builder: ConditionChainBuilder = {
   condition_chain: {
     parent: undefined,
     key(item: string) {
-      console.log(item);
       return ConditionBuilder.create(this.parent, item);
     },
     and() {

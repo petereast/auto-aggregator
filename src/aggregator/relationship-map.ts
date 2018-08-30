@@ -53,8 +53,6 @@ const generate_relationship_graph = (event_defs: any[]) => {
 // I probably don't have to generate this intermediate tree,
 // the purpose of it is to help me think through the search strategy
 // Actually, it might be useful as it'll remove problems caused by graph cycles??
-//
-// TODO: Redefine this algorithm - see TODO in index.ts
 const generate_relationship_tree = (
   start_point: string,
   event_relationships: Map<string, string[]>,
@@ -157,8 +155,6 @@ const relationship_map_navigator = (
       },
       [],
     );
-
-    console.log('path', merge_dependencies(paths));
 
     return merge_dependencies(paths);
   };
